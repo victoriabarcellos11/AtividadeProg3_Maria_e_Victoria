@@ -283,6 +283,34 @@ async function cadastrarDispositivo() {
 async function atualizarDispositivo() {
   alert('Botão ATUALIZAR clicado!');
   // TODO: Passo 4
+  const id = campoId.value.trim();
+  const nome = campoNome.value.trim();
+  const cor = campoCor.value.trim();
+  const capacidade = campoCapacidade.value.trim();
+  const preco = campoPreco.value;
+
+  //validação do campo nome
+  if (!nome) {
+    mostrarMensagem('O nome do dispositivo é obrigatório.', 'erro');
+    return;
+  }
+
+  //validação do preço
+ const precoNumerico = parseFloat(preco) || 0;
+
+ //objeto
+  const novoDispositivo = {
+    name: nome,
+    data: {
+      color: cor,
+      capacity: capacidade,
+      price: precoNumerico
+    }
+  };
+
+
+
+  
 }
 
 async function excluirDispositivo() {
