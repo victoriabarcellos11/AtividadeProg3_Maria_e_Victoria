@@ -147,7 +147,6 @@ async function listarDispositivos() {
   } catch (erro) {
     mostrarMensagem('Erro ao listar: ' + erro.message, 'erro');
   }
-  alert('Botão LISTAR clicado!');
   // TODO: Passo 1
 }
 
