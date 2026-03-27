@@ -3,7 +3,7 @@
 // ============================================================
 
 // Endereço base da API pública de testes
-const URL_API = 'https://api.restful-api.dev/objects';
+const URL_API = "https://restful-apidevcloe.vercel.app/objects";//'https://api.restful-api.dev/objects';
 
 // ============================================================
 // VETOR LOCAL (nosso "espelho" dos dados da API)
@@ -282,12 +282,91 @@ async function cadastrarDispositivo() {
 
 async function atualizarDispositivo() {
   // TODO: Passo 4
+  const id = campoId.value.trim();
+  const nome = campoNome.value.trim();
+  const cor = campoCor.value.trim();
+  const capacidade = campoCapacidade.value.trim();
+  const preco = campoPreco.value;
 
+  //validação do campo nome
+  if (!nome) {
+    mostrarMensagem('O nome do dispositivo é obrigatório.', 'erro');
+    return;
+  }
+
+  //validação do preço
+ const precoNumerico = parseFloat(preco) || 0;
+
+ //objeto
+  const dispositivoEditado = {
+    name: nome,
+    data: {
+      color: cor,
+      capacity: capacidade,
+      price: precoNumerico
+    }
+  };
+
+const respostaHTTP = await fetch(`${URL_API}/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(dispositivoEditado)
+    });
+
+    // 5. Verificar se a resposta foi bem-sucedida
+    if (!respostaHTTP.ok) {
+      mostrarMensagem('Erro ao editar. A API retornou status ' + respostaHTTP.status + '.', 'erro');
+      return;
+    }
+
+  const itemAtualizado = await respostaHTTP.json();
+
+  // findIndex() percorre o vetor e retorna a POSIÇÃO (0, 1, 2...)
+// do primeiro item que satisfaz a condição.
+// Se não encontrar, retorna -1.
+const posicao = dispositivos.findIndex(d => d.id === id);
+
+if (posicao !== -1) {
+  // Substituir o item antigo pelo atualizado
+  dispositivos[posicao] = itemAtualizado;
+}
+renderizar();
+mostrarMensagem();
 }
 
 async function excluirDispositivo() {
-  alert('Botão EXCLUIR clicado!');
   // TODO: Passo 5
+  const id = campoId.value.trim();
+
+  //validação do campo id
+   if (!id) {
+    mostrarMensagem('O ID do dispositivo é obrigatório.', 'erro');
+    return;
+  }
+
+  //confirmação do usuário
+  const confirmou = confirm('Tem certeza que deseja excluir?');
+if (!confirmou) {
+  return;   // Usuário cancelou — encerra a função sem fazer nada
+}
+
+  const respostaHTTP = await fetch(`${URL_API}/${id}`, {
+      method: 'DELETE',
+    });
+
+    if (!respostaHTTP.ok) {
+      mostrarMensagem('Erro ao editar. A API retornou status ' + respostaHTTP.status + '.', 'erro');
+      return;
+    }
+
+    dispositivos = dispositivos.filter(d => d.id !== id);
+
+    renderizar();
+    limparFormulario();
+    mostrarMensagem();
+
 }
 
 // ============================================================
