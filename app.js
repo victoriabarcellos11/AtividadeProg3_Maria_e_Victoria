@@ -213,7 +213,70 @@ async function buscarPorId() {
 }
 
 async function cadastrarDispositivo() {
-  alert('Botão CADASTRAR clicado!');
+  // 1. Ler os valores dos campos do formulário
+  const nome = campoNome.value.trim();
+  const cor = campoCor.value.trim();
+  const capacidade = campoCapacidade.value.trim();
+  const preco = campoPreco.value;
+
+  // 2. Validação mínima: nome é obrigatório
+  if (!nome) {
+    mostrarMensagem('O nome do dispositivo é obrigatório.', 'erro');
+    return;
+  }
+
+  // 3. Montar o objeto no formato que a API espera
+  //    (consulte a documentação da API para saber o formato)
+  // parseFloat() converte texto para número decimal.
+  // Se o campo estiver vazio, parseFloat('') retorna NaN (Not a Number).
+  // Usamos o operador || para substituir NaN por 0.
+  const precoNumerico = parseFloat(preco) || 0;
+
+  const novoDispositivo = {
+    name: nome,
+    data: {
+      color: cor,
+      capacity: capacidade,
+      price: precoNumerico
+    }
+  };
+
+  try {
+    // 4. Fazer a requisição POST
+    //    Diferente do GET, aqui precisamos configurar:
+    //    - method: qual verbo HTTP usar
+    //    - headers: avisar que estamos enviando JSON
+    //    - body: os dados convertidos de objeto JS para texto JSON
+    const respostaHTTP = await fetch(URL_API, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(novoDispositivo)
+    });
+
+    // 5. Verificar se a resposta foi bem-sucedida
+    if (!respostaHTTP.ok) {
+      mostrarMensagem('Erro ao cadastrar. A API retornou status ' + respostaHTTP.status + '.', 'erro');
+      return;
+    }
+
+    // 6. Converter a resposta (a API retorna o objeto criado, agora com um ID)
+    const itemCriado = await respostaHTTP.json();
+
+    // 6. Adicionar o novo item ao vetor local
+    dispositivos.push(itemCriado);
+
+    // 7. Redesenhar a tabela para mostrar o novo item
+    renderizar();
+
+    // 8. Limpar o formulário e informar o usuário
+    limparFormulario();
+    mostrarMensagem('Dispositivo "' + itemCriado.name + '" cadastrado! ID: ' + itemCriado.id, 'sucesso');
+
+  } catch (erro) {
+    mostrarMensagem('Erro ao cadastrar: ' + erro.message, 'erro');
+  }
   // TODO: Passo 3
 }
 
