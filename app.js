@@ -332,6 +332,8 @@ if (posicao !== -1) {
   // Substituir o item antigo pelo atualizado
   dispositivos[posicao] = itemAtualizado;
 }
+renderizar();
+mostrarMensagem();
 }
 
 async function excluirDispositivo() {
