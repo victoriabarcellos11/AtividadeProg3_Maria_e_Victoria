@@ -281,7 +281,6 @@ async function cadastrarDispositivo() {
 }
 
 async function atualizarDispositivo() {
-  alert('Botão ATUALIZAR clicado!');
   // TODO: Passo 4
   const id = campoId.value.trim();
   const nome = campoNome.value.trim();
