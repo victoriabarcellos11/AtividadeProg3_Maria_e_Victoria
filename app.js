@@ -299,7 +299,7 @@ async function atualizarDispositivo() {
  const precoNumerico = parseFloat(preco) || 0;
 
  //objeto
-  const novoDispositivo = {
+  const dispositivoEditado = {
     name: nome,
     data: {
       color: cor,
@@ -308,9 +308,31 @@ async function atualizarDispositivo() {
     }
   };
 
+const respostaHTTP = await fetch(`${URL_API}/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(dispositivoEditado)
+    });
 
+    // 5. Verificar se a resposta foi bem-sucedida
+    if (!respostaHTTP.ok) {
+      mostrarMensagem('Erro ao editar. A API retornou status ' + respostaHTTP.status + '.', 'erro');
+      return;
+    }
 
-  
+  const itemAtualizado = await respostaHTTP.json();
+
+  // findIndex() percorre o vetor e retorna a POSIÇÃO (0, 1, 2...)
+// do primeiro item que satisfaz a condição.
+// Se não encontrar, retorna -1.
+const posicao = dispositivos.findIndex(d => d.id === id);
+
+if (posicao !== -1) {
+  // Substituir o item antigo pelo atualizado
+  dispositivos[posicao] = itemAtualizado;
+}
 }
 
 async function excluirDispositivo() {
