@@ -126,6 +126,27 @@ function renderizar() {
 // ============================================================
 
 async function listarDispositivos() {
+     try {
+    // 1. Fazer a requisição GET para a API
+    //    (GET é o método padrão do fetch — não precisamos configurar nada)
+    const respostaHTTP = await fetch(URL_API);
+
+    // 2. Converter a resposta HTTP em um objeto JavaScript
+    //    (a API retorna texto JSON, o .json() transforma em objeto/vetor)
+    const dados = await respostaHTTP.json();
+
+    // 3. Salvar os dados no vetor local
+    dispositivos = dados;
+
+    // 4. Redesenhar a tabela com os novos dados
+    renderizar();
+
+    // 5. Informar o usuário
+    mostrarMensagem(dispositivos.length + ' dispositivos encontrados.', 'sucesso');
+
+  } catch (erro) {
+    mostrarMensagem('Erro ao listar: ' + erro.message, 'erro');
+  }
   alert('Botão LISTAR clicado!');
   // TODO: Passo 1
 }
