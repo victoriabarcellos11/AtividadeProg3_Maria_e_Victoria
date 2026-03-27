@@ -151,7 +151,64 @@ async function listarDispositivos() {
 }
 
 async function buscarPorId() {
-  alert('Botão BUSCAR POR ID clicado!');
+  // 1. Pegar o valor que o usuário digitou no campo ID
+  const id = campoId.value.trim();
+
+  // 2. Validar: se o campo está vazio, avisar e parar
+  if (!id) {
+    mostrarMensagem('Digite um ID para buscar.', 'erro');
+    return;   // "return" encerra a função aqui, nada abaixo executa
+  }
+
+  try {
+    // 3. Fazer a requisição GET, agora com o ID na URL
+    //    (Template Literal: o acento grave permite inserir variáveis com ${})
+    const respostaHTTP = await fetch(`${URL_API}/${id}`);
+
+    // 4. Verificar se a API encontrou o objeto
+    if (!respostaHTTP.ok) {
+      mostrarMensagem('Dispositivo não encontrado (ID: ' + id + ').', 'erro');
+      return;
+    }
+
+    // 5. Converter a resposta em objeto JavaScript
+    const item = await respostaHTTP.json();
+
+    // 6. Preencher o formulário com os dados retornados
+    //    (isso facilita a edição — o aluno vê os dados atuais e altera o que quiser)
+    if (item.name) {
+      campoNome.value = item.name;
+    } else {
+      campoNome.value = '';
+    }
+
+    if (item.data && item.data.color) {
+      campoCor.value = item.data.color;
+    } else {
+      campoCor.value = '';
+    }
+
+    if (item.data && item.data.capacity) {
+      campoCapacidade.value = item.data.capacity;
+    } else {
+      campoCapacidade.value = '';
+    }
+
+    if (item.data && item.data.price) {
+      campoPreco.value = item.data.price;
+    } else {
+      campoPreco.value = '';
+    }
+
+    // 7. Atualizar o vetor local: colocar somente este item para visualização
+    dispositivos = [item];
+    renderizar();
+
+    mostrarMensagem('Dispositivo "' + item.name + '" encontrado.', 'sucesso');
+
+  } catch (erro) {
+    mostrarMensagem('Erro ao buscar: ' + erro.message, 'erro');
+  }
   // TODO: Passo 2
 }
 
